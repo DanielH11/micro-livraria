@@ -19,7 +19,6 @@ app.get('/products', (req, res, next) => {
         }
     });
 });
-
 /**
  * Consulta o frete de envio no ShippingService
  */
@@ -42,9 +41,17 @@ app.get('/shipping/:cep', (req, res, next) => {
     );
 });
 
-/**
- * Inicia o router
- */
+app.get('/product/:id', (req,res,next) =>{
+    inventory.SearchProductByID({id: req.params.id}, (err, product) => {
+        if(err){
+            console.log(err);
+            res.status(500).send({error: 'algo falhou :('});
+        }
+        else
+            res.json(product);
+    });
+});
+
 app.listen(3000, () => {
     console.log('Controller Service running on http://127.0.0.1:3000');
 });
