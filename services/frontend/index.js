@@ -35,6 +35,34 @@ function newBook(book) {
     return div;
 }
 
+function wantedBook(book) {
+    const div = document.createElement('div');
+    div.className = 'column is-4 is-centered';
+    div.innerHTML = `
+        <div id="wanted" class="card is-shady">
+            <div class="card-image">
+                <figure class="image is-4by3">
+                    <img
+                        src="${book.photo}"
+                        alt="${book.name}"
+                        class="modal-button"
+                    />
+                </figure>
+            </div>
+            <div class="card-content">
+                <div class="content book" data-id="${book.id}">
+                    <div class="book-meta">
+                        <p class="is-size-4">R$${book.price.toFixed(2)}</p>
+                        <p class="is-size-6">Disponível em estoque: 5</p>
+                        <h4 class="is-size-3 title">${book.name}</h4>
+                        <p class="subtitle">${book.author}</p>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+    return div;
+}
+
 function calculateShipping(id, cep) {
     fetch('http://localhost:3000/shipping/' + cep)
         .then((data) => {
@@ -82,6 +110,29 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                 });
             }
+        })
+        .catch((err) => {
+            swal('Erro', 'Erro ao listar os produtos', 'error');
+            console.error(err);
+        });
+});
+const botao = document.getElementById("botao");
+
+botao.addEventListener('click', function () {
+    const id = document.getElementById("procura").value;
+    console.log("Apertou!")
+    console.log(id)
+
+    fetch('http://localhost:3000/product/' + id)
+        .then((data) => {
+            if (data.ok) {
+                return data.json();
+            }
+            throw data.statusText;
+        })
+        .then((data) => {
+            const wanted = document.querySelector('.pesquisa');
+            wanted.appendChild(wantedBook(data));
         })
         .catch((err) => {
             swal('Erro', 'Erro ao listar os produtos', 'error');
